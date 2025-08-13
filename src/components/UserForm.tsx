@@ -1,6 +1,7 @@
-import { useForm, FormProvider } from "react-hook-form";
+import React from "react";
+import { useForm, FormProvider, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input } from "rsuite";
+import { Button, Form, Input } from "rsuite";
 import { UserSchema, type UserSchemaType } from "../schemas/UserSchema";
 import { DefaultValues } from "../schemas/UserSchema";
 
@@ -21,6 +22,9 @@ export const UserForm = () => {
     resolver: zodResolver(UserSchema),
     defaultValues: DefaultValues,
   });
+
+  const { control, handleSubmit, formState } = methods;
+
   const onSubmit = (data: UserSchemaType) => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -32,43 +36,98 @@ export const UserForm = () => {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
+      <Form onSubmit={handleSubmit(onSubmit)} fluid>
         <div style={styleContainer as React.CSSProperties}>
-          <label htmlFor="name">Nombre</label>
-          <input type="text" id="name" {...methods.register("name")} />
-          {methods.formState.errors.name && (
-            <span style={errorText}>
-              {methods.formState.errors.name.message}
-            </span>
-          )}
+          {/* Nombre */}
+          <Form.Group>
+            <Form.ControlLabel>Nombre</Form.ControlLabel>
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  onChange={(value) => field.onChange(value)}
+                  value={field.value}
+                  placeholder="Escribe tu nombre"
+                />
+              )}
+            />
+            {formState.errors.name && (
+              <span style={errorText}>{formState.errors.name.message}</span>
+            )}
+          </Form.Group>
+
+          {/* Email */}
+          <Form.Group>
+            <Form.ControlLabel>Correo electrónico</Form.ControlLabel>
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  onChange={(value) => field.onChange(value)}
+                  value={field.value}
+                  placeholder="ejemplo@correo.com"
+                />
+              )}
+            />
+            {formState.errors.email && (
+              <span style={errorText}>{formState.errors.email.message}</span>
+            )}
+          </Form.Group>
+
+          {/* Contraseña */}
+          <Form.Group>
+            <Form.ControlLabel>Contraseña</Form.ControlLabel>
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  type="password"
+                  onChange={(value) => field.onChange(value)}
+                  value={field.value}
+                  placeholder="******"
+                />
+              )}
+            />
+            {formState.errors.password && (
+              <span style={errorText}>{formState.errors.password.message}</span>
+            )}
+          </Form.Group>
+
+          {/* Confirmar Contraseña */}
+          <Form.Group>
+            <Form.ControlLabel>Confirmar contraseña</Form.ControlLabel>
+            <Controller
+              name="confirmPassword"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  type="password"
+                  onChange={(value) => field.onChange(value)}
+                  value={field.value}
+                  placeholder="******"
+                />
+              )}
+            />
+            {formState.errors.confirmPassword && (
+              <span style={errorText}>
+                {formState.errors.confirmPassword.message}
+              </span>
+            )}
+          </Form.Group>
+
+          {/* Botón */}
+          <Button appearance="primary" type="submit">
+            Enviar
+          </Button>
         </div>
-        <div>
-          <label htmlFor="email">Correo electronico</label>
-          <input type="text" id="email" {...methods.register("email")} />
-          {methods.formState.errors.email && (
-            <span>{methods.formState.errors.email.message}</span>
-          )}
-        </div>
-        <div>
-          <label htmlFor="password">Contrasenia</label>
-          <input type="text" id="password" {...methods.register("password")} />
-          {methods.formState.errors.password && (
-            <span>{methods.formState.errors.password.message}</span>
-          )}
-        </div>
-        <div>
-          <label htmlFor="confirmPassword">Confirmar tu contrasenia</label>
-          <input
-            type="text"
-            id="confirmPassword"
-            {...methods.register("confirmPassword")}
-          />
-          {methods.formState.errors.confirmPassword && (
-            <span>{methods.formState.errors.confirmPassword.message}</span>
-          )}
-        </div>
-        <Button>input</Button>
-      </form>
+      </Form>
     </FormProvider>
   );
 };
